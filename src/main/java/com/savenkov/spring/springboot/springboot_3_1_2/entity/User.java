@@ -3,6 +3,8 @@ package com.savenkov.spring.springboot.springboot_3_1_2.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -84,5 +86,18 @@ public class User {
                 ", city='" + city + '\'' +
                 ", age=" + age +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && age == user.age && name.equals(user.name) && surname.equals(user.surname) && city.equals(user.city);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, surname, city, age);
     }
 }

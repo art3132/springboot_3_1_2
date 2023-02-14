@@ -2,12 +2,12 @@ package com.savenkov.spring.springboot.springboot_3_1_2.controller;
 
 import com.savenkov.spring.springboot.springboot_3_1_2.entity.User;
 import com.savenkov.spring.springboot.springboot_3_1_2.service.UserService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-@RestController
-@RequestMapping("/api")
+@Controller
 public class UserController {
 
     private final UserService userService;
@@ -17,35 +17,40 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<User> showAllUsers() {
-        return userService.getAllUsers();
+    public String showAllUsers(Model model) {
+        List<User> allUsers = userService.getAllUsers();
+        model.addAttribute("users", allUsers);
+        return "all-users";
     }
 
-    @GetMapping("/users/{id}")
-    public User getUser(@PathVariable long id) {
-        return userService.getUser(id);
+    @GetMapping("/user-create")
+    public String getUserForm(User user) {
+        return "create-user";
     }
 
-    @PutMapping("/users")
-    public User updateUser(@RequestBody User user) {
+    @PostMapping("/user-create")
+    public String addNewUser(User user) {
         userService.saveUser(user);
-        return user;
+        return "redirect:/users";
     }
 
-    @PostMapping("/users")
-    public User addNewUser(@RequestBody User user) {
+    @GetMapping("/user-update/{id}")
+    public String updateUserForm(@PathVariable long id, Model model) {
+        User user = userService.getUser(id);
+        model.addAttribute("user", user);
+        return "user-update";
+    }
+
+    @PostMapping("/user-update")
+    public String updateUser(User user) {
         userService.saveUser(user);
-        return user;
+        return "redirect:/users";
     }
 
-    @DeleteMapping("/users/{id}")
-    public String deleteUser(@PathVariable long id) {
+    @GetMapping("/user-delete/{id}")
+    public String deleteUserForm(@PathVariable long id) {
         userService.deleteUser(id);
-        return "User with ID = " + id + " was deleted";
+        return "redirect:/users";
     }
 
-    @GetMapping("/users/{city}")
-    public List<User> findAllUsersByCity(@PathVariable String city) {
-        return userService.findAllByCity(city);
-    }
 }
